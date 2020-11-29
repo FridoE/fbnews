@@ -1,11 +1,11 @@
 		 fbnews - a RSS fetcher for fluxbox 
 
 
-fbnews is a RSS/RDF newsfetcher for fluxbox created in 2004-2005. 
-Since I'm not using fluxbox anymore, it is currently unmaintained.
+fbnews is a RSS/RDF newsfetcher for the window manager fluxbox created in 2004-2005. 
+It is currently unmaintained, since don't use fluxbox anymore.
 
 fbnews creates a submenu structure in the fluxbox menu and fills it with the content of 
-the RSS sources you specify. 
+the RSS sources you specify.  
 
 
 LICENSE
