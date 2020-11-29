@@ -1,0 +1,314 @@
+\input texinfo   @c -*-texinfo-*-
+@c %**start of header
+@setfilename fbnews.info
+@settitle fbnews Manual 0.5
+@c %**end of header
+     
+@copying
+     This manual is for fbnews 0.5 
+     Copyright @copyright{ 2004-2005} Frithjof Engel    
+@end copying
+     
+@titlepage
+@title fbnews Manual
+@subtitle A RSS/RDF news fetcher for fluxbox
+@author Frithjof Engel
+     
+@page
+@vskip 0pt plus 1filll
+@end titlepage
+
+@contents
+     
+@ifnottex
+@node Top, Getting fbnews, (dir), (dir)
+@top fbnews
+     
+@insertcopying
+@end ifnottex
+
+@chapter Introduction
+fbnews is a RSS/RDF news fetcher for fluxbox. It creates 
+a submenu structure in the fluxbox menu and fills it with the content of 
+the RSS sources you specify. You can then read the news items with your
+favorite browser.
+
+@menu
+* Getting fbnews::        
+* Understanding how fbnews works::
+* Configuration::        
+* Invoking fbnews::
+* Copying::
+* Credits::
+@end menu
+
+@node Getting fbnews, Understanding how fbnews works, Top, Top
+@chapter How to obtain and install fbnews
+
+@menu 
+* Requirements::
+* Installing::
+* Creating a fluxbox menu entry::
+* Automatically starting fbnews::
+@end menu
+
+@node Requirements, Installing, Getting fbnews, Getting fbnews
+@section Requirements
+fbnews requires Python 2.3 and the recent fluxbox devel version.
+If you want documentation, you need GNU texinfo as well.
+
+@node Installing, Creating a fluxbox menu entry, Requirements, Getting fbnews
+@section Installing
+You can download fbnews on its website
+@uref{http://www.fms-engel.de/fbnews, www.fms-engel.de}.
+Then do:
+
+@example
+tar xzf fbnews-0.4.tar.gz
+cd fbnews-0.4
+su -c "make install"
+@end example
+
+If this is your first installation of fbnews, copy the example rc file to
+your personal .fluxbox directory.
+
+@example
+cp fbnewsrc ~/.fluxbox
+@end example
+
+@node Creating a fluxbox menu entry, Automatically starting fbnews, Installing, Getting fbnews
+@section Creating a fluxbox menu entry
+For every specified rss file, one submenu in the News menu will be
+created. The News menu is basically just a fluxbox submenu which must be
+created manually. Its position in the fluxbox menu file does not matter:
+
+@verbatim
+[submenu] (Apps) {}
+    [exec] (Cool program) {cool}
+[end]
+
+[submenu] (<- News ->) {}             <- This is the newsmenu
+    [include] (~/.fluxbox/news)      
+[end]
+@end verbatim
+
+As shown above, the Newsmenu only has to include one file; the file in which
+fbnews writes the converted rss data. The actual name of the menu (in this
+case '<- News ->' does not matter. 
+
+@node Automatically starting fbnews,  , Creating a fluxbox menu entry, Getting fbnews
+@section Automatically starting fbnews
+There are several ways to automatically invoke fbnews when starting
+fluxbox. The most elegant way in the author's opinion is putting an [startup]
+entry into .fluxbox/apps. Just add the following line.
+
+@verbatim
+[startup]              {fbnews}
+@end verbatim
+
+Other ways are using X's .xinitrc/.Xsession facilities. However, these
+are not further illustrated here. 
+
+@node Understanding how fbnews works, Configuration, Getting fbnews, Top
+@chapter Understanding how fbnews works
+fbnews consists of a small set of Python scripts that parses rss input
+and converts it into the fluxbox menu format. The normal operation mode 
+is invoking fbnews on fluxbox startup. By default it will then fetch 
+the rss files you have specified and afterwards sleeps for some time
+until it refetches the rss data. The converted data now
+reside in a file (default is ~/.fluxbox/news) you can include from your 
+fluxbox menu.
+
+fbnews' behaviour can be configured in the file ~/.fluxbox/fbnewsrc and 
+by passing command line options. See the following two chapters on how
+to do this.
+
+@node Configuration, Invoking fbnews, Understanding how fbnews works, Top
+@chapter Configuration via fbnewsrc
+
+@menu
+* Specifying rss files::
+* General configuration::
+@end menu
+
+@node Specifying rss files, General configuration, Configuration, Configuration
+@section Specifying rss files
+In your ~/.fluxbox/fbnewsrc file, you'll find a line called
+[Sources]. Below that line you can list the rss files you want to
+have fetched. An example:
+
+@example
+[Sources]
+http://url.to/rdf
+http://secondurl.com/site.rss
+@end example
+
+@subsection Using scripts instead of rss sources
+If the site you want to syndicate does not offer an rss file, you 
+can use scripts that parse the regular HTML code and send the 
+headlines to stdout in rss format. (You'll find some of these 
+scripts on @uref{http://www.fms-engel.de/r3s, the author's webpage})
+
+Such scripts can be used in fbnews:
+
+@example
+[Sources]
+Scripts: ~/scripts/somesite.py
+@end example
+
+This will execute the script and take the output as rss code.
+
+@subsection Categories
+Fbnews supports subcategories.
+To define a category, use the keyword ``Cat:'' followed by a name: 
+
+@example
+[Sources]
+http://someurl.bla/rdf # This resides in the root fbnews menu
+Cat: Computers
+http://acomputersite.com/rss
+Cat: Recreation
+http://thingsiliketodo.com/rdf
+@end example
+
+This example features two categories, with each one rss file in it:
+``Computers'' and ``Recreation''.
+
+@subsection Separators
+Sometimes it's useful to visually separate certain site items in 
+the fluxbox menu for better navigation. You can use Separators for this:
+
+@example
+[Sources]
+http://url.to/rdf
+Sep: -- Science --
+http://science.url/rdf
+@end example
+
+This will insert a Separator between the first and the second URL.
+
+@page
+
+@node General configuration,  , Specifying rss files, Configuration
+@section General configuration
+You can control the way fbnews works in the file ~/.fluxbox/fbnewsrc.
+The syntax is:
+@verbatim
+<option>: <value>
+@end verbatim
+
+@subsection Browser 
+When you click on a menu item, that is, news item, your browser will
+load the webpage for it. The default is:
+
+@example 
+Browser: "startmoz %s"
+@end example
+
+This will look for a mozilla browser you have installed. 
+When an instance is already running, it
+will open a new tab for it, otherwise it will start a new instance. 
+Startmoz is actually a utility script that is installed by 
+fbnews to open new tabs in mozilla browsers. Alternatively, you can
+specify your browser of choice here. 
+%s is the URL that will be passed as an argument.
+
+@subsection Sleep 
+The time in minutes fbnews sleeps after each news fetch. Please set a 
+reasonable high value here to not annoy site administrators.
+Default is:
+
+@example
+Sleep: 120
+@end example
+
+@subsection Newsfile 
+The newsfile is the output file for fbnews. This contains the fluxbox
+menu code for your rss files. You include this file from your main
+fluxbox menu, as described in the chapter on installation. 
+Default is:
+
+@example
+Newsfile: ~/.fluxbox/news
+@end example
+
+@subsection Logfile
+fbnews reports the status of the last fetch here.
+Default is:
+
+@example
+Logfile: ~/.fluxbox/fbnews.log
+@end example
+
+@subsection Siteformat
+By default fbnews uses the site title given in the rss file as its site
+caption. If you don't want this, you can define a custom rule for site
+captions:
+
+@example
+Siteformat: ``%s'' # The default, nothing special
+@end example
+
+@subsection Maxlen
+Some sites have an annoyingly long title. This will expand the fluxbox
+menu beyond useful dimensions. To avoid it you can specify a maximum 
+title length here:
+
+@example
+Maxlen: ``30'' # This will limit site titles to 30 characters
+@end example
+
+@node Invoking fbnews, Copying, Configuration, Top
+@chapter Invoking fbnews
+@verbatim
+Usage: fbnews [options]
+Options:
+  -1, --once        Just fetch feeds once, then exit
+  -f rcfile,        Use alternative rcfile as fbnewsrc
+  --file rcfile     
+  --dump            Dump output to screen
+  --html file       Write html output to file
+  -d, --debug       Be verbose on the screen
+  -h, --help        Print this screen
+@end verbatim
+
+@section Options
+@subsection ---once, -1
+Normally fbnews runs as a daemon. To suppress this, use this option.
+Fbnews will fetch the rss data and then quit.
+
+@subsection ---dump
+Write the converted rss data to screen instead of writing it to 
+a file (normally ~/.fluxbox/news).
+
+@subsection --html file
+Fbnews writes html output to file. Note that normal output
+to fluxbox news file will NOT happen if you specify this option.
+
+@node Copying, Credits, Invoking fbnews, Top
+@chapter Copying
+Both fbnews and this manual can be distributed under the terms of the 
+GNU General Public License. See file COPYING that came with this 
+distribution. 
+
+@node Credits,  , Copying, Top
+@chapter Credits
+
+fbnews was written by Frithjof Engel
+@email{frithjof_engel@@users.sf.net}.
+Others have helped in one way or another. Take a look at the
+file ``THANKS'' that came with this software.
+
+fbnews is postcard-ware. If you like it, please consider sending the 
+author a postcard. That always makes his day.
+@verbatim
+Frithjof Engel 
+Goetenkamp 26
+22927 Grosshansdorf
+Germany
+@end verbatim
+
+@c Local Variables: 
+@c mode: texinfo1
+@c TeX-master: t
+@c End: 

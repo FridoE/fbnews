@@ -1,0 +1,36 @@
+Version 0.5.1 (May 2005)
+- Fixed bug in doc Makefile (reported by agl)
+
+Version 0.5 (May 2005)
+- Fixed bug in config reparsing that lead to crash 
+- Html output
+- Minor Fixes
+Note: Probably the last version released by me
+
+Version 0.4 (Jan 2005)
+- News items are arranged as they appear in the rss file
+- Subcategory support
+- A "Max length" option for site titles
+
+Version 0.3  (Dec 2004)
+- Ability to use scripts instead of rss files
+- "Once" command line options to not run fbnews as a daemon
+- Fixed bug that caused firefox to not startup when clicking a news item
+- Real documentation
+- added several command line options
+
+
+Version 0.2  (Oct 2004)
+====================
+- Now compatible with fluxbox 0.9.10
+- Support for non ascii characters
+- New, better xml parser
+
+
+Version 0.1  (Mar 2004)
+===================
+Second release:
+	Thanks to Christopher Bratlien the default browser command
+	now opens a new tab in firefox if an instance of it is available.
+
+First release of fbnews.
